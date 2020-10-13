@@ -41,7 +41,7 @@ class UserNoteDetailActivity: AppCompatActivity() {
         userNote = if (intent.getSerializableExtra(EXTRA_NOTE)!=null) {
             intent.getSerializableExtra(EXTRA_NOTE) as UserNote
         } else{
-            UserNote(Math.random().toLong(),"", null, null)
+            UserNote(UUID.randomUUID().toString(),"", null, null)
         }
         cancelButton.setOnClickListener{finish()}
         Log.d("myLogs", "" + userNote.created)
