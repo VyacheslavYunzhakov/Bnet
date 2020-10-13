@@ -1,18 +1,18 @@
 package com.example.bnet.data
 
-import android.graphics.Movie
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.room.*
 
 @Dao
 interface UserNoteDao {
 
     @Query("SELECT * FROM usernote ORDER BY modified DESC")
-    fun getUserNotes(): LiveData<List<UserNote>>
+    fun getUserNotes(): LiveData<MutableList<UserNote>>
+    //fun getUserNotes(): LiveData<UserNoteData>
 
     @Query("SELECT * FROM usernote")
-    fun getUserNotesSimple():List<UserNote>
+    fun getUserNotesSimple():MutableList<UserNote>
+    //fun getUserNotesSimple():UserNoteData
 
     @Insert
     fun addUserNote(userNote: UserNote)

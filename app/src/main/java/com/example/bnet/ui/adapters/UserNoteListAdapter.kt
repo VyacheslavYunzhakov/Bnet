@@ -9,13 +9,14 @@ import com.example.bnet.R
 import com.example.bnet.app.App
 import com.example.bnet.app.AppDatabase
 import com.example.bnet.data.UserNote
+import com.example.bnet.data.UserNoteData
 import com.example.bnet.extencions.ctx
 import kotlinx.android.synthetic.main.user_note_item.view.*
 import java.text.SimpleDateFormat
 import java.util.*
 
 class UserNoteListAdapter (private val onItemClickListener: OnItemClickListener,
-                           private var userNotesList: List<UserNote>):
+                           private var userNotesList: UserNoteData):
     RecyclerView.Adapter<UserNoteListAdapter.ViewHolder>() {
     var database: AppDatabase = App.database
     //private var userNotesList=database.userNoteDao().getUserNotes().value
@@ -47,16 +48,16 @@ class UserNoteListAdapter (private val onItemClickListener: OnItemClickListener,
 
     }
 
-    fun updateUserNotes(userNotesList: List<UserNote>) {
+    fun updateUserNotes(userNotesList: UserNoteData) {
         this.userNotesList = userNotesList
         notifyDataSetChanged()
     }
 
-    override fun getItemCount(): Int = userNotesList.size
+    override fun getItemCount(): Int = userNotesList.data.size
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        userNotesList?.get(position)?.let { holder.bindUserNotes(it, onItemClickListener) }
+        holder.bindUserNotes(userNotesList.data[position], onItemClickListener)
         holder.itemView.setOnClickListener(mInternalListener)
-        holder.itemView.tag = userNotesList?.get(position)
+        holder.itemView.tag = userNotesList.data[position]
     }
 
     interface OnItemClickListener {
