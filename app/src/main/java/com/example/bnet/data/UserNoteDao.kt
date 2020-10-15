@@ -7,12 +7,10 @@ import androidx.room.*
 interface UserNoteDao {
 
     @Query("SELECT * FROM usernote ORDER BY modified DESC")
-    fun getUserNotes(): LiveData<MutableList<UserNote>>
-    //fun getUserNotes(): LiveData<UserNoteData>
+    fun getUserNotesFromDatabase(): LiveData<MutableList<UserNote>>
 
     @Query("SELECT * FROM usernote")
     fun getUserNotesSimple():MutableList<UserNote>
-    //fun getUserNotesSimple():UserNoteData
 
     @Insert
     fun addUserNote(userNote: UserNote)
@@ -22,19 +20,6 @@ interface UserNoteDao {
 
     @Query("DELETE FROM usernote")
     fun clearTable()
-    /*
-    private val  userNoteList = UserNotesList(mutableListOf<UserNote>())
-    private val userNotes = MutableLiveData<UserNotesList>()
 
-    init {
-        userNotes.value = userNoteList
-    }
-
-    fun addUserNote(userNote: UserNote){
-        userNoteList.add(userNote)
-        userNotes.value = userNoteList
-    }
-
-     */
 
 }

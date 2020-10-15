@@ -3,13 +3,9 @@ package com.example.bnet.data
 
 class UserNoteRepository private constructor (private val userNoteDao: UserNoteDao) {
 
-    fun addUserNote(userNote: UserNote){
-        userNoteDao.addUserNote(userNote)
-    }
-    fun getUserNotes() = userNoteDao.getUserNotes()
+    fun getUserNotesFromDatabase() = userNoteDao.getUserNotesFromDatabase()
 
     companion object {
-        // Singleton instantiation you already know and love
         @Volatile
         private var instance: UserNoteRepository? = null
 
