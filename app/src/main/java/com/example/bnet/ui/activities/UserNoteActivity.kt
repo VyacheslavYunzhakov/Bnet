@@ -39,13 +39,14 @@ class UserNoteActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user_note_list)
 
-        //database.userNoteDao().clearTable()
         val userNotesViewModel = ViewModelProvider(this, factory).get(UserNotesViewModel::class.java)
         userNoteListView.layoutManager = LinearLayoutManager(this)
 
-        retrieveSessionId(userNotesViewModel)
+
         if(!isNetworkConnected(this)){
-            showAlertDialog(userNotesViewModel)
+            showAlertDialogFirstLaunch(userNotesViewModel)
+        }else{
+            retrieveSessionId(userNotesViewModel)
         }
 
             userNotesViewModel.getUserNotesFromDatabase().observe(getOwner(), Observer {
@@ -62,6 +63,18 @@ class UserNoteActivity : AppCompatActivity() {
             })
 
         addUserNoteButton.setOnClickListener{addUserNote()}
+    }
+
+    private fun showAlertDialogFirstLaunch(userNotesViewModel: UserNotesViewModel) {
+        AlertDialog.Builder(this).setTitle("No Internet Connection")
+            .setMessage("Please check your internet connection and try to launch application again")
+            .setPositiveButton(android.R.string.ok) { _, _ -> }
+            .setIcon(android.R.drawable.ic_dialog_alert).show()
+            .setButton(
+                Dialog.BUTTON_POSITIVE, "Refresh"
+            ) { dialog, which ->
+                finish()
+            }
     }
 
     fun showAlertDialog(userNotesViewModel: UserNotesViewModel){
@@ -132,20 +145,22 @@ class UserNoteActivity : AppCompatActivity() {
                 .setMessage(exception.message)
                 .setPositiveButton(android.R.string.ok) { _, _ -> }
                 .setIcon(android.R.drawable.ic_dialog_alert).show()
+            mainActivityJob.cancel()
         }
         val coroutineScope = CoroutineScope(mainActivityJob + Dispatchers.Main)
         coroutineScope.launch(errorHandler) {
                 userNotesViewModel.getUserNotes(sessionId).observe(getOwner(), Observer {
                     it?.let {
-
-                        userNoteListView.adapter = UserNoteListAdapter(object :
-                            UserNoteListAdapter.OnItemClickListener {
-                            override fun onItemClick(view: View, userNote: UserNote) {
-                                editUserNote(view, userNote)
-                            }
-                        }, it.data[0])
-                        (userNoteListView.adapter as UserNoteListAdapter).updateUserNotes(it.data[0])
-                        hideLoading()
+                        if (it.data.isNotEmpty()) {
+                            userNoteListView.adapter = UserNoteListAdapter(object :
+                                UserNoteListAdapter.OnItemClickListener {
+                                override fun onItemClick(view: View, userNote: UserNote) {
+                                    editUserNote(view, userNote)
+                                }
+                            }, it.data[0])
+                            (userNoteListView.adapter as UserNoteListAdapter).updateUserNotes(it.data[0])
+                            hideLoading()
+                        }
                     }
                 })
         }
